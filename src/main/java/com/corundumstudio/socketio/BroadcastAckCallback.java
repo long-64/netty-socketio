@@ -18,6 +18,10 @@ package com.corundumstudio.socketio;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * 广播 AckCallBack
+ * @param <T>
+ */
 public class BroadcastAckCallback<T> {
 
     final AtomicBoolean loopFinished = new AtomicBoolean();

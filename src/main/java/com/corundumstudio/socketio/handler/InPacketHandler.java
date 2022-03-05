@@ -15,6 +15,7 @@
  */
 package com.corundumstudio.socketio.handler;
 
+import com.corundumstudio.socketio.Transport;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -51,6 +52,9 @@ public class InPacketHandler extends SimpleChannelInboundHandler<PacketsMessage>
         this.exceptionListener = exceptionListener;
     }
 
+    /**
+     *  Netty 事件消息
+     */
     @Override
     protected void channelRead0(io.netty.channel.ChannelHandlerContext ctx, PacketsMessage message)
                 throws Exception {
@@ -62,6 +66,9 @@ public class InPacketHandler extends SimpleChannelInboundHandler<PacketsMessage>
         }
         while (content.isReadable()) {
             try {
+                /**
+                 * 消息解码 {@link PacketDecoder#decodePackets(ByteBuf, ClientHead)}
+                 */
                 Packet packet = decoder.decodePackets(content, client);
                 if (packet.hasAttachments() && !packet.isAttachmentsLoaded()) {
                     return;
@@ -89,6 +96,10 @@ public class InPacketHandler extends SimpleChannelInboundHandler<PacketsMessage>
                     log.debug("Can't find namespace client in namespace: {}, sessionId: {} probably it was disconnected.", ns.getName(), client.getSessionId());
                     return;
                 }
+
+                /**
+                 *  packet 监听 {@link PacketListener#onPacket(Packet, NamespaceClient, Transport)}
+                 */
                 packetListener.onPacket(packet, nClient, message.getTransport());
             } catch (Exception ex) {
                 String c = content.toString(CharsetUtil.UTF_8);

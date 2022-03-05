@@ -105,6 +105,10 @@ public class SingleRoomBroadcastOperations implements BroadcastOperations {
     @Override
     public <T> void sendEvent(String name, Object data, BroadcastAckCallback<T> ackCallback) {
         for (SocketIOClient client : clients) {
+            /**
+             *  sendEvent {@link com.corundumstudio.socketio.transport.NamespaceClient#sendEvent(String, AckCallback, Object...)}
+             *  创建 callback {@link BroadcastAckCallback#createClientCallback(SocketIOClient)}
+             */
             client.sendEvent(name, ackCallback.createClientCallback(client), data);
         }
         ackCallback.loopFinished();
@@ -116,6 +120,10 @@ public class SingleRoomBroadcastOperations implements BroadcastOperations {
             if (client.getSessionId().equals(excludedClient.getSessionId())) {
                 continue;
             }
+
+            /**
+             *  创建 callback {@link BroadcastAckCallback#createClientCallback(SocketIOClient)}
+             */
             client.sendEvent(name, ackCallback.createClientCallback(client), data);
         }
         ackCallback.loopFinished();

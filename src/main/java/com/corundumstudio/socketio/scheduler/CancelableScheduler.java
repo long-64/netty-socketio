@@ -19,6 +19,14 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ *
+ *  两个子类，都是基于 Netty 时间轮实现。
+ *     {@link HashedWheelTimeoutScheduler}  任务超时后，自动取消
+ *     {@link HashedWheelScheduler}  任务超时后, 不自动取消
+ *
+ */
 public interface CancelableScheduler {
 
     void update(ChannelHandlerContext ctx);

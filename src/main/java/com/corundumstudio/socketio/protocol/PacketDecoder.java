@@ -106,6 +106,8 @@ public class PacketDecoder {
     }
 
     public Packet decodePackets(ByteBuf buffer, ClientHead client) throws IOException {
+
+        // 字符串类型
         if (isStringPacket(buffer)) {
             // TODO refactor
             int maxLength = Math.min(buffer.readableBytes(), 10);
@@ -118,6 +120,10 @@ public class PacketDecoder {
             ByteBuf frame = buffer.slice(buffer.readerIndex() + 1, len);
             // skip this frame
             buffer.readerIndex(buffer.readerIndex() + 1 + len);
+
+            /**
+             * 解码 {@link #decode(ClientHead, ByteBuf)}
+             */
             return decode(client, frame);
         } else if (hasLengthHeader(buffer)) {
             // TODO refactor
@@ -146,6 +152,10 @@ public class PacketDecoder {
     private Packet decode(ClientHead head, ByteBuf frame) throws IOException {
         if ((frame.getByte(0) == 'b' && frame.getByte(1) == '4')
                 || frame.getByte(0) == 4 || frame.getByte(0) == 1) {
+
+            /**
+             * 解析二进制 {@link #parseBinary(ClientHead, ByteBuf)}
+             */
             return parseBinary(head, frame);
         }
         PacketType type = readType(frame);
@@ -258,6 +268,10 @@ public class PacketDecoder {
                 slices.add(source.slice());
 
                 ByteBuf compositeBuf = Unpooled.wrappedBuffer(slices.toArray(new ByteBuf[slices.size()]));
+
+                /**
+                 * 解析 body {@link #parseBody(ClientHead, ByteBuf, Packet)}
+                 */
                 parseBody(head, compositeBuf, binaryPacket);
                 head.setLastBinaryPacket(null);
                 return binaryPacket;
@@ -286,6 +300,10 @@ public class PacketDecoder {
             if (packet.getSubType() == PacketType.ACK
                     || packet.getSubType() == PacketType.BINARY_ACK) {
                 ByteBufInputStream in = new ByteBufInputStream(frame);
+
+                /**
+                 *  {@link AckManager#getCallback(UUID, long)}
+                 */
                 AckCallback<?> callback = ackManager.getCallback(head.getSessionId(), packet.getAckId());
                 AckArgs args = jsonSupport.readAckArgs(in, callback);
                 packet.setData(args.getArgs());
