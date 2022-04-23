@@ -114,6 +114,10 @@ public class PollingTransport extends ChannelInboundHandlerAdapter {
             String origin = req.headers().get(HttpHeaderNames.ORIGIN);
             if (queryDecoder.parameters().containsKey("disconnect")) {
                 ClientHead client = clientsBox.get(sessionId);
+
+                /**
+                 * 断开事件 {@link ClientHead#onChannelDisconnect()}
+                 */
                 client.onChannelDisconnect();
                 ctx.channel().writeAndFlush(new XHRPostMessage(origin, sessionId));
             } else if (HttpMethod.POST.equals(req.method())) {

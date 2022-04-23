@@ -113,6 +113,9 @@ public class PacketListener {
         }
 
         case CLOSE:
+            /**
+             *  disconnect 处理 {@link ClientHead#onChannelDisconnect()}
+             */
             client.getBaseClient().onChannelDisconnect();
             break;
 

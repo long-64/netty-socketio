@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import com.corundumstudio.socketio.namespace.Namespace;
 
+/**
+ * 扫描，添加监听
+ */
 public class ScannerEngine {
 
     private static final Logger log = LoggerFactory.getLogger(ScannerEngine.class);

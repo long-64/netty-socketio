@@ -231,6 +231,9 @@ public class PacketDecoder {
             frame.readByte();
         }
 
+        /**
+         *  获取最后一个二进制包，{@link ClientHead#getLastBinaryPacket()}
+         */
         Packet binaryPacket = head.getLastBinaryPacket();
         if (binaryPacket != null) {
             if (frame.getByte(0) == 'b' && frame.getByte(1) == '4') {

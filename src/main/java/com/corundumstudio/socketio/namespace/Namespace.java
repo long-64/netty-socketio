@@ -15,6 +15,8 @@
  */
 package com.corundumstudio.socketio.namespace;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -190,13 +192,22 @@ public class Namespace implements SocketIONamespace {
 
         // client must leave all rooms and publish the leave msg one by one on disconnect.
         for (String joinedRoom : joinedRooms) {
+            /**
+             *  client 离线 {@link #leave(String, UUID)}
+             */
             leave(roomClients, joinedRoom, client.getSessionId());
+
+            // 发布离线，message
             storeFactory.pubSubStore().publish(PubSubType.LEAVE, new JoinLeaveMessage(client.getSessionId(), joinedRoom, getName()));
         }
         clientRooms.remove(client.getSessionId());
 
         try {
             for (DisconnectListener listener : disconnectListeners) {
+
+                /**
+                 * 触发 disconnectListener {@link com.corundumstudio.socketio.annotation.OnDisconnectScanner#addListener(Namespace, Object, Method, Annotation)}
+                 */
                 listener.onDisconnect(client);
             }
         } catch (Exception e) {

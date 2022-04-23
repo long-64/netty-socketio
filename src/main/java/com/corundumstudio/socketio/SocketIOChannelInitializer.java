@@ -218,10 +218,15 @@ public class SocketIOChannelInitializer extends ChannelInitializer<Channel> impl
 
     @Override
     public void onDisconnect(ClientHead client) {
+
+        /**
+         * 断开链接，触发,ack timeout 事件 {@link AckManager#onDisconnect(ClientHead)}
+         */
         ackManager.onDisconnect(client);
         authorizeHandler.onDisconnect(client);
         configuration.getStoreFactory().onDisconnect(client);
 
+        // 发布, `disconnect` 事件
         configuration.getStoreFactory().pubSubStore().publish(PubSubType.DISCONNECT, new DisconnectMessage(client.getSessionId()));
 
         log.debug("Client with sessionId: {} disconnected", client.getSessionId());

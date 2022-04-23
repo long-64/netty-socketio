@@ -115,11 +115,17 @@ public class ClientHead {
         return send(packet, getCurrentTransport());
     }
 
+    /**
+     * 取消，pingTimeout
+     */
     public void cancelPingTimeout() {
         SchedulerKey key = new SchedulerKey(Type.PING_TIMEOUT, sessionId);
         disconnectScheduler.cancel(key);
     }
 
+    /**
+     * pingTimeout schedule
+     */
     public void schedulePingTimeout() {
         SchedulerKey key = new SchedulerKey(Type.PING_TIMEOUT, sessionId);
         disconnectScheduler.schedule(key, new Runnable() {
@@ -151,8 +157,13 @@ public class ClientHead {
     }
 
     public void removeNamespaceClient(NamespaceClient client) {
+
+        // 删除映射关系
         namespaceClients.remove(client.getNamespace());
         if (namespaceClients.isEmpty()) {
+            /**
+             * {@link com.corundumstudio.socketio.SocketIOChannelInitializer#onDisconnect(ClientHead)}
+             */
             disconnectableHub.onDisconnect(this);
         }
     }
@@ -176,10 +187,18 @@ public class ClientHead {
     }
 
     public void onChannelDisconnect() {
+
+        /**
+         * 链接断开，取消 pintTimeout `Scheduler` {@link #cancelPingTimeout()}
+         */
         cancelPingTimeout();
 
         disconnected.set(true);
         for (NamespaceClient client : namespaceClients.values()) {
+
+            /**
+             * 断开事件 {@link NamespaceClient#onDisconnect()}
+             */
             client.onDisconnect();
         }
         for (TransportState state : channels.values()) {

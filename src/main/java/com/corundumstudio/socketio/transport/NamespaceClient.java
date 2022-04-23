@@ -111,7 +111,14 @@ public class NamespaceClient implements SocketIOClient {
     public void onDisconnect() {
         disconnected.set(true);
 
+        /**
+         *  删除 namespaceClient {@link ClientHead#removeNamespaceClient(NamespaceClient)}
+         */
         baseClient.removeNamespaceClient(this);
+
+        /**
+         * namespace 断开链接 {@link Namespace#onDisconnect(SocketIOClient)}
+         */
         namespace.onDisconnect(this);
 
         log.debug("Client {} for namespace {} has been disconnected", baseClient.getSessionId(), getNamespace().getName());
